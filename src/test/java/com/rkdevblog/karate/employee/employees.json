@@ -1,0 +1,40 @@
+{
+  "employees": [
+    {
+      "id": "emp-1",
+      "name": "john",
+      "email": "john@gmail.com",
+      "address": "winterfell"
+    },
+    {
+      "id": "emp-1",
+      "name": "john",
+      "email": "john@gmail.com",
+      "address": "winterfell"
+    },
+    {
+      "id": "emp-1",
+      "name": "john",
+      "email": "john@gmail.com",
+      "address": "winterfell"
+    },
+    {
+      "id": "emp-1",
+      "name": "john",
+      "email": "john@gmail.com",
+      "address": "winterfell"
+    },
+    {
+      "id": "emp-1",
+      "name": "john",
+      "email": "john@gmail.com",
+      "address": "winterfell"
+    },
+    {
+      "id": "emp-1",
+      "name": "john",
+      "email": "john@gmail.com",
+      "address": "winterfell"
+    }
+  ]
+}
