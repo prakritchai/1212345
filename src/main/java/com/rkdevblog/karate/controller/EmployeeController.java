@@ -8,7 +8,9 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.rkdevblog.karate.dto.AllEmployeeResponseDto;
 import com.rkdevblog.karate.dto.EmployeeResponseDto;
 import com.rkdevblog.karate.model.Employee;
+import com.rkdevblog.karate.pdfthymeleaf.PDFThymeleafExample;
 import com.rkdevblog.karate.service.TestExporter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,26 +71,28 @@ public class EmployeeController {
         return new ResponseEntity<>(allEmployeeResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/export1")
-    public void createPdf(HttpServletRequest request, HttpServletResponse response){
+    @GetMapping("/download1")
+    public void createPdf(HttpServletRequest request, HttpServletResponse response) throws IOException, DocumentException {
         ServletContext context = request.getServletContext();
-        String path = context.getRealPath("/resources/reports/Resume_KPC.pdf");
-        File file = new File(path);
+        PDFThymeleafExample thymeleaf2Pdf = new PDFThymeleafExample();
+        String html = thymeleaf2Pdf.parseThymeleafTemplate();
+        thymeleaf2Pdf.generatePdfFromHtml(html,request);
+        String absolutePathToIndexJSP = context.getRealPath("/test2.pdf");
+        File file = new File(absolutePathToIndexJSP);
         if(file.exists()){
             try{
                 FileInputStream inputStream = new FileInputStream(file);
-                String mimeType = context.getMimeType(path);
-                response.setContentType(mimeType);
-                response.setHeader("content-disposition", "attachment; filename=Resume_KPC.pdf");
+                response.setHeader("content-disposition", "inline; filename=test2.pdf");
+                response.setContentType("application/pdf");
                 OutputStream outputStream = response.getOutputStream();
-                byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[8192];
                 int bytesRead = -1;
                 while((bytesRead = inputStream.read(buffer)) != -1){
                     outputStream.write(buffer, 0, bytesRead);
                 }
                 inputStream.close();
                 outputStream.close();
-                //file.delete();
+                file.delete();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -98,7 +102,7 @@ public class EmployeeController {
 
     }
 
-    @GetMapping("/export2")
+    @GetMapping("/download2")
     public void exportToPDF(HttpServletRequest request, HttpServletResponse response){
         response.setContentType("application/pdf");
         String headerKey = "Content-Disposition";
@@ -110,4 +114,42 @@ public class EmployeeController {
         exporter.export(response);
 
     }
+//
+//    @GetMapping("/download3")
+//    public ResponseEntity<byte[]> getPDF1(){
+//
+//
+//        File file = new File("C:\\Users\\prakr\\Documents\\GitHub\\1212345\\API-test-karate-example\\src\\main\\resources\\reports\\Resume_KPC.pdf");
+//        if(file.exists()){
+//            try{
+//                HttpHeaders headers = new HttpHeaders();
+//
+//                headers.setContentType(MediaType.parseMediaType("application/pdf"));
+//                String filename = "pdf1.pdf";
+//
+//                headers.add("content-disposition", "inline;filename=" + filename);
+//
+//                headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+//
+//
+//                FileInputStream inputStream = new FileInputStream(file);
+//                OutputStream outputStream = response.getOutputStream();
+//                byte[] buffer = new byte[8192];
+//                int bytesRead = -1;
+//                while((bytesRead = inputStream.read(buffer)) != -1){
+//                    outputStream.write(buffer, 0, bytesRead);
+//                }
+//                inputStream.close();
+//                outputStream.close();
+//                ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(pdf1Bytes, headers, HttpStatus.OK);
+//                return response;
+//                //file.delete();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//    }
 }
